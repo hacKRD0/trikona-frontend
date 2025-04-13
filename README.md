@@ -13,7 +13,7 @@ A modern, secure authentication and user management frontend application built w
 ## 🚀 Features
 
 - **Authentication System**
-  - Secure login and registration
+  - Secure user login and registration
   - User session management
   - Protected routes
   - Form validation
