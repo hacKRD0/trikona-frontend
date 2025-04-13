@@ -1,54 +1,113 @@
-# React + TypeScript + Vite
+# Trikona Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, secure authentication and user management frontend application built with React, TypeScript, and Tailwind CSS.
 
-Currently, two official plugins are available:
+## 🎯 Project Objectives
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Provide a secure and user-friendly authentication system
+- Implement modern UI/UX design principles
+- Ensure type safety with TypeScript
+- Maintain scalable and maintainable code structure
+- Follow best practices for state management with Redux
 
-## Expanding the ESLint configuration
+## 🚀 Features
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Authentication System**
+  - Secure login and registration
+  - User session management
+  - Protected routes
+  - Form validation
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+- **Modern UI/UX**
+  - Responsive design
+  - Clean and intuitive interface
+  - Tailwind CSS for styling
+  - Heroicons and React Icons integration
+
+- **State Management**
+  - Redux Toolkit for global state
+  - Redux Persist for state persistence
+  - Type-safe actions and reducers
+
+- **Development Tools**
+  - Vite for fast development and building
+  - ESLint for code quality
+  - TypeScript for type safety
+  - Environment configuration support
+
+## 🛠️ Tech Stack
+
+- React 19
+- TypeScript
+- Redux Toolkit
+- React Router DOM
+- Tailwind CSS
+- React Toastify
+- Vite
+
+## 📦 Installation
+
+1. Clone the repository:
+```bash
+git clone [repository-url]
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+2. Install dependencies:
+```bash
+npm install
 ```
+
+3. Create a `.env` file in the root directory and add your environment variables:
+```env
+VITE_API_URL=your_api_url
+```
+
+4. Start the development server:
+```bash
+npm run dev
+```
+
+## 🏗️ Build
+
+For development:
+```bash
+npm run build
+```
+
+For production:
+```bash
+npm run build:prod
+```
+
+## 🔍 Linting
+
+Run the linter:
+```bash
+npm run lint
+```
+
+## 📁 Project Structure
+
+```
+src/
+├── assets/         # Static assets
+├── components/     # Reusable components
+├── config/         # Configuration files
+├── pages/          # Page components
+├── redux/          # Redux store and slices
+├── utils/          # Utility functions
+├── App.tsx         # Main application component
+└── main.tsx        # Application entry point
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.

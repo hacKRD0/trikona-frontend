@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { logout } from '../../redux/slices/authSlice';
 import { showToast } from '../../redux/slices/toastSlice';
-import { UserCircleIcon } from '@heroicons/react/24/outline';
+import { FaUserCircle } from 'react-icons/fa';
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
@@ -38,7 +38,7 @@ const Header: React.FC = () => {
                 onClick={toggleProfileMenu}
                 className="flex items-center text-gray-700 hover:text-indigo-600 focus:outline-none"
               >
-                <UserCircleIcon className="h-8 w-8" />
+                <FaUserCircle className="h-8 w-8" />
               </button>
 
               {isProfileMenuOpen && (

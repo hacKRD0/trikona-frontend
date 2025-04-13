@@ -6,8 +6,10 @@ import { AppDispatch, RootState } from '../../redux/store';
 import { setCredentials } from '../../redux/slices/authSlice';
 import { showToast } from '../../redux/slices/toastSlice';
 import { Link, useNavigate } from 'react-router-dom';
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import { FaLinkedin } from 'react-icons/fa';
+import PasswordInput from '../common/PasswordInput';
+import LoadingButton from '../common/LoadingButton';
+import { isStrongPassword } from '../../utils/passwordUtils';
 
 interface FormData {
   firstName?: string;
@@ -34,8 +36,6 @@ const AuthForm: React.FC = () => {
     confirmPassword: '',
     linkedinUrl: '',
   });
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
   const [isLinkedInLoading, setIsLinkedInLoading] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
@@ -57,11 +57,6 @@ const AuthForm: React.FC = () => {
     } else {
       setFormData({ ...formData, [e.target.name]: e.target.value });
     }
-  };
-
-  const isStrongPassword = (password: string): boolean => {
-    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
-    return regex.test(password);
   };
 
   const handleInitialRegistrationSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -329,74 +324,34 @@ const AuthForm: React.FC = () => {
             className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-300"
           />
         </div>
-        <div className="relative mb-4">
-          <label htmlFor="password" className="block text-gray-700 mb-1">
-            Password
-          </label>
-          <div className="relative">
-            <input
-              id="password"
-              type={showPassword ? 'text' : 'password'}
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              className="w-full px-3 py-2 pr-10 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-300"
-            />
-            <button
-              type="button"
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? (
-                <EyeSlashIcon className="h-5 w-5" />
-              ) : (
-                <EyeIcon className="h-5 w-5" />
-              )}
-            </button>
-          </div>
+        <div className="mb-4">
+          <PasswordInput
+            id="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+            label="Password"
+          />
         </div>
         {!isLogin && (
-          <div className="relative mb-6">
-            <label htmlFor="confirmPassword" className="block text-gray-700 mb-1">
-              Confirm Password
-            </label>
-            <div className="relative">
-              <input
-                id="confirmPassword"
-                type={showConfirmPassword ? 'text' : 'password'}
-                name="confirmPassword"
-                value={formData.confirmPassword || ''}
-                onChange={handleChange}
-                required
-                className="w-full px-3 py-2 pr-10 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-300"
-              />
-              <button
-                type="button"
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              >
-                {showConfirmPassword ? (
-                  <EyeSlashIcon className="h-5 w-5" />
-                ) : (
-                  <EyeIcon className="h-5 w-5" />
-                )}
-              </button>
-            </div>
+          <div className="mb-6">
+            <PasswordInput
+              id="confirmPassword"
+              name="confirmPassword"
+              value={formData.confirmPassword || ''}
+              onChange={handleChange}
+              required
+              label="Confirm Password"
+            />
           </div>
         )}
-        <button
+        <LoadingButton
           type="submit"
-          className="w-full py-2 px-4 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors"
+          isLoading={isLogin ? isLoggingIn : isRegistering}
         >
-          {isLogin
-            ? isLoggingIn
-              ? 'Logging in...'
-              : 'Login'
-            : isRegistering
-            ? 'Registering...'
-            : 'Register'}
-        </button>
+          {isLogin ? 'Login' : 'Register'}
+        </LoadingButton>
       </form>
       
       {isLogin && (
