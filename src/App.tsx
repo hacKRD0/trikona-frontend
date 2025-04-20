@@ -31,7 +31,7 @@ const App: React.FC = () => {
   return (
     <Routes>
       <Route path="/auth" element={<AuthPage />} />
-      <Route path="/linkedin/callback" element={<LinkedInCallback />} />
+      <Route path="/linkedin-callback" element={<LinkedInCallback />} />
       <Route path="/role-selection" element={<RoleSelection />} />
       <Route path="/register" element={<RegistrationPage />} />
       <Route path="/reset-password" element={<ResetPassword />} />
