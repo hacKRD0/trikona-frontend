@@ -4,8 +4,9 @@ import { setupListeners } from '@reduxjs/toolkit/query';
 import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import authReducer, { logout } from './slices/authSlice';
+import directoryReducer from './slices/directorySlice';
 import toastReducer, { showToast } from './slices/toastSlice';
-import { authApi } from './services/authApi';
+import { authApi, directoryApi } from './services/index';
 import passwordResetReducer from './slices/passwordResetSlice';
 
 // Create your root reducer by combining all slice reducers.
@@ -14,6 +15,8 @@ const rootReducer = combineReducers({
   toast: toastReducer,
   [authApi.reducerPath]: authApi.reducer,
   passwordReset: passwordResetReducer,
+  directory: directoryReducer,
+  [directoryApi.reducerPath]: directoryApi.reducer,
 });
 
 // Configure redux-persist
@@ -52,7 +55,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false, // Disabling serializableCheck for redux-persist.
-    }).concat(authApi.middleware, rtkQueryErrorLogger),
+    }).concat(authApi.middleware, rtkQueryErrorLogger).concat(directoryApi.middleware),
 });
 
 // Enable RTK Query's automatic re-fetching, etc.

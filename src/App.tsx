@@ -12,6 +12,7 @@ import RoleSelection from './pages/RoleSelection';
 import ResetPassword from './pages/ResetPassword';
 import RegistrationPage from './pages/RegistrationPage';
 import ForgotPassword from './pages/ForgotPassword';
+import StudentDirectoryPage from './pages/directory/StudentDirectory';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -46,6 +47,11 @@ const App: React.FC = () => {
         <Route path="profile" element={
           <ProtectedRoute>
             <Profile />
+          </ProtectedRoute>
+        } />
+        <Route path="directory/students" element={
+          <ProtectedRoute>
+            <StudentDirectoryPage />
           </ProtectedRoute>
         } />
       </Route>
