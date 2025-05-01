@@ -17,7 +17,12 @@ const directorySlice = createSlice({
       state,
       action: PayloadAction<{ filterId: string; values: string[] }>
     ) {
-      state.filters[action.payload.filterId] = action.payload.values;
+      const { filterId, values } = action.payload;
+      if (values.length > 0) {
+        state.filters[filterId] = values;
+      } else {
+        delete state.filters[filterId];
+      }
     },
     clearFilter(state, action: PayloadAction<string>) {
       delete state.filters[action.payload];

@@ -10,3 +10,10 @@ export const ROLES = {
   MODERATOR: 'moderator'
 }
 
+export const FIELDS_OF_STUDY = [
+  "Civil Engineering", "Structural Engineering", "Geotechnical Engineering", "Traffic Engineering"
+]
+
+export const LEVELS_OF_STUDY = [
+  "Bachelors", "Masters", "High School", "Diploma"
+]

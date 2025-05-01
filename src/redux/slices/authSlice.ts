@@ -18,7 +18,7 @@ interface AuthState {
 }
 
 const initialState: AuthState = {
-  token: localStorage.getItem('token'),
+  token: null,
   user: null,
   loading: false,
   error: null,
@@ -36,7 +36,6 @@ const authSlice = createSlice({
       const { token, user } = action.payload;
       state.token = token;
       state.user = user;
-      localStorage.setItem('token', token);
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
@@ -47,7 +46,6 @@ const authSlice = createSlice({
     logout: (state) => {
       state.token = null;
       state.user = null;
-      localStorage.removeItem('token');
     },
     // Action to show a toast notification with a custom message and type.
     showToast(state, action: PayloadAction<Toast>) {

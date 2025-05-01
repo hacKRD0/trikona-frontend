@@ -11,15 +11,20 @@ export interface User {
   [key: string]: any;
 }
 
-/** Only the filters relevant to students */
+/** Filters for student directory */
 export interface StudentFilters {
   collegeName?: string[];
-  yearOfStudy?: string[];
   level?: string[];
-  cgpa?: string[];
-  coursesCompleted?: string[];
+  cgpaRanges?: string[];
+  yearOfStudy?: string[];
+  company?: string[];
+  title?: string[];
+  minExperienceYears?: number;
+  maxExperienceYears?: number;
   skills?: string[];
-  certifications?: string[];
+  searchTerm?: string;
+  page?: number;
+  pageSize?: number;
 }
 
 /** Generic paginated response wrapper */
@@ -37,20 +42,25 @@ export const directoryApi = createApi({
   endpoints: (builder) => ({
     /** Fetches *only* students, with optional student-specific filters */
     getAllStudents: builder.query<
-      PaginatedResponse<User>,   // <-- updated response type
+      PaginatedResponse<User>,
       StudentFilters
     >({
       query: (filters) => {
         const params = new URLSearchParams();
-        params.append('role', 'student');
+        // params.append('role', 'student');
 
         Object.entries(filters).forEach(([key, value]) => {
-          if (Array.isArray(value) && value.length) {
-            // join values by comma rather than multiple params
-            params.append(key, value.join(','));
+          if (value !== undefined && value !== null) {
+            if (Array.isArray(value) && value.length > 0) {
+              params.append(key, value.join(','));
+            } else if (typeof value === 'string' || typeof value === 'number') {
+              params.append(key, value.toString());
+            }
           }
         });
-
+        if (params.toString() === '') {
+          return 'directory/students';
+        }
         return `directory/students?${params.toString()}`;
       },
     }),

@@ -8,6 +8,7 @@ export interface ProfileCardProps {
   major?: string;
   experienceYears?: number;
   linkedInUrl?: string;
+  collegeName?: string;
 }
 
 const ProfileCard: React.FC<ProfileCardProps> = ({
@@ -17,6 +18,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
   major,
   experienceYears,
   linkedInUrl,
+  collegeName,
 }) => {
   return (
     <div className="bg-white shadow rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
@@ -33,6 +35,9 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
       </div>
       <div className="p-4">
         <h3 className="text-lg font-semibold text-gray-900">{name}</h3>
+        {collegeName && (
+          <p className="text-sm text-gray-600 mb-1">{collegeName}</p>
+        )}
         {(degree || major) && (
           <p className="text-sm text-gray-600 mb-1">
             {degree}{degree && major ? ' in ' : ''}{major}

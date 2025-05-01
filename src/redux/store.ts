@@ -1,7 +1,7 @@
 // store.ts
 import { combineReducers, configureStore, Middleware, isRejectedWithValue } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
-import { persistReducer, persistStore } from 'redux-persist';
+import { persistReducer, persistStore, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import authReducer, { logout } from './slices/authSlice';
 import directoryReducer from './slices/directorySlice';
@@ -23,8 +23,8 @@ const rootReducer = combineReducers({
 const persistConfig = {
   key: 'root',
   storage,
-  // Optionally, blacklist slices that you don't want to persist.
-  blacklist: [authApi.reducerPath, 'toast'],
+  // Whitelist only the slices that should persist across refreshes
+  whitelist: ['auth', 'passwordReset'],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -32,12 +32,19 @@ const persistedReducer = persistReducer(persistConfig, rootReducer);
 // Custom middleware to catch RTK Query errors (e.g., unauthorized errors)
 interface ErrorPayload {
   status: number;
+  data?: {
+    error?: string;
+  };
 }
 
 const rtkQueryErrorLogger: Middleware = (store) => (next) => (action) => {
   if (isRejectedWithValue(action)) {
     const payload = action.payload as ErrorPayload | undefined;
-    if (payload && (payload.status === 401 || payload.status === 403)) {
+    const isLoginEndpoint = action?.meta?.arg?.endpointName?.includes('login') || false; 
+    console.log('isLoginEndpoint', isLoginEndpoint);
+    if (payload 
+      && (payload.status === 401 || payload.status === 403)
+      && !isLoginEndpoint) {
       store.dispatch(logout());
       store.dispatch(
         showToast({
@@ -54,8 +61,11 @@ export const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: false, // Disabling serializableCheck for redux-persist.
-    }).concat(authApi.middleware, rtkQueryErrorLogger).concat(directoryApi.middleware),
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+        // Only ignore redux-persist actions, not everything
+      },
+    }).concat(authApi.middleware, rtkQueryErrorLogger, directoryApi.middleware),
 });
 
 // Enable RTK Query's automatic re-fetching, etc.

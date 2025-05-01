@@ -46,13 +46,18 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
         />
         <button
           type="button"
-          className="absolute inset-y-0 right-0 pr-3 flex items-center"
-          onClick={() => setShowPassword(!showPassword)}
+          tabIndex={-1}
+          className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer z-10"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setShowPassword(!showPassword);
+          }}
         >
           {showPassword ? (
-            <FaEye className="h-5 w-5 text-gray-400" />
+            <FaEye className="h-5 w-5 text-gray-400 pointer-events-none" />
           ) : (
-            <FaEyeSlash className="h-5 w-5 text-gray-400" />
+            <FaEyeSlash className="h-5 w-5 text-gray-400 pointer-events-none" />
           )}
         </button>
       </div>
@@ -60,4 +65,4 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
   );
 };
 
-export default PasswordInput; 
+export default PasswordInput;

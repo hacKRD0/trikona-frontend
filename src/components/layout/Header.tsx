@@ -39,10 +39,10 @@ const Header: React.FC = () => {
 
               <div className="relative">
                 <button
-                  onClick={() => setIsDirectoriesOpen((open) => !open)}
+                  onClick={() => setIsDirectoriesOpen((open) => !open)}                  
                   className="flex items-center text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium focus:outline-none"
                 >
-                  Directories <FaChevronDown className="ml-1" />
+                  Directories
                 </button>
 
                 {isDirectoriesOpen && (
