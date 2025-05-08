@@ -13,7 +13,6 @@ export interface FilterSidebarProps {
 }
 
 const FilterSidebar: React.FC<FilterSidebarProps> = React.memo(({ filters, selected, onChange }) => {
-  console.log('print');
   
   const handleOptionChange = useCallback((id: string, opt: string) => {
     const curr = selected[id] || [];

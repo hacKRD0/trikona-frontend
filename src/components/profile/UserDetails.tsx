@@ -136,28 +136,28 @@ const UserDetails: React.FC = () => {
           <div className="sm:col-span-3">
             <div className="flex flex-col">
               <span className="text-sm font-medium text-gray-500">First Name</span>
-              <span className="mt-1 text-sm text-gray-900">{user.firstName || 'Not provided'}</span>
+              <span className="mt-1 text-sm text-gray-900">{user?.firstName || 'Not provided'}</span>
             </div>
           </div>
           
           <div className="sm:col-span-3">
             <div className="flex flex-col">
               <span className="text-sm font-medium text-gray-500">Last Name</span>
-              <span className="mt-1 text-sm text-gray-900">{user.lastName || 'Not provided'}</span>
+              <span className="mt-1 text-sm text-gray-900">{user?.lastName || 'Not provided'}</span>
             </div>
           </div>
           
           <div className="sm:col-span-3">
             <div className="flex flex-col">
               <span className="text-sm font-medium text-gray-500">Email</span>
-              <span className="mt-1 text-sm text-gray-900">{user.email || 'Not provided'}</span>
+              <span className="mt-1 text-sm text-gray-900">{user?.email || 'Not provided'}</span>
             </div>
           </div>
           
           <div className="sm:col-span-3">
             <div className="flex flex-col">
               <span className="text-sm font-medium text-gray-500">Role</span>
-              <span className="mt-1 text-sm text-gray-900">{user.role || 'Not provided'}</span>
+              <span className="mt-1 text-sm text-gray-900">{user?.role || 'Not provided'}</span>
             </div>
           </div>
 
@@ -165,14 +165,14 @@ const UserDetails: React.FC = () => {
             <div className="flex flex-col">
               <span className="text-sm font-medium text-gray-500">LinkedIn URL</span>
               <span className="mt-1 text-sm text-gray-900">
-                {user.linkedInUrl ? (
+                {user?.linkedInUrl ? (
                   <a 
-                    href={user.linkedInUrl} 
+                    href={user?.linkedInUrl} 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="text-indigo-600 hover:text-indigo-500"
                   >
-                    {user.linkedInUrl}
+                    {user?.linkedInUrl}
                   </a>
                 ) : 'Not provided'}
               </span>

@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { logout } from '../../redux/slices/authSlice';
 import { showToast } from '../../redux/slices/toastSlice';
-import { FaUserCircle, FaChevronDown } from 'react-icons/fa';
+import { FaUserCircle } from 'react-icons/fa';
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
