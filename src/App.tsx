@@ -14,6 +14,8 @@ import RegistrationPage from './pages/RegistrationPage';
 import ForgotPassword from './pages/ForgotPassword';
 import StudentDirectoryPage from './pages/directory/StudentDirectory';
 import CorporateDirectoryPage from './pages/directory/CorporateDirectory';
+import ProfessionalDirectoryPage from './pages/directory/ProfessionalDirectory';
+import CollegeDirectoryPage from './pages/directory/CollegeDirectory';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -58,6 +60,16 @@ const App: React.FC = () => {
         <Route path="directory/corporates" element={
           <ProtectedRoute>
             <CorporateDirectoryPage />
+          </ProtectedRoute>
+        } />
+        <Route path="directory/professionals" element={
+          <ProtectedRoute>
+            <ProfessionalDirectoryPage />
+          </ProtectedRoute>
+        } />
+        <Route path="directory/colleges" element={
+          <ProtectedRoute>
+            <CollegeDirectoryPage />
           </ProtectedRoute>
         } />
       </Route>

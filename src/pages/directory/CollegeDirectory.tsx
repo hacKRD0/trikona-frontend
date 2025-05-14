@@ -1,8 +1,9 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useGetAllCorporatesQuery } from '../../redux/services/directoryApi';
-import FilterSidebar, { type FilterType } from '../../components/directory/corporate/FilterSideBar';
-import ProfileCard from '../../components/directory/corporate/ProfileCard';
+import { useGetAllCollegesQuery, useGetStatesQuery } from '../../redux/services/directoryApi';
+import FilterSidebar, { FilterType } from '../../components/directory/college/FilterSidebar';
+import ProfileCard from '../../components/directory/college/ProfileCard';
+import { Option } from '../../components/common/SearchableDropdown';
 
 // Helper to parse array from URL search params
 const parseArrayParam = (param: string | null): string[] => {
@@ -20,18 +21,16 @@ const stringifyArrayParam = (arr: string[]): string => {
   return encodeURIComponent(JSON.stringify(arr));
 };
 
-const CorporateDirectory: React.FC = () => {
+const CollegeDirectory: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState('');
 
   // Get filter values from URL or default to empty arrays
   const selectedFilters = useMemo(() => ({
-    industry: parseArrayParam(searchParams.get('industry')),
-    service: parseArrayParam(searchParams.get('service')),
-    sector: parseArrayParam(searchParams.get('sector')),
     state: parseArrayParam(searchParams.get('state')),
-    headcountRanges: parseArrayParam(searchParams.get('headcountRanges'))
-  } as const), [searchParams]);
+    programs: parseArrayParam(searchParams.get('programs')),
+    accreditation: parseArrayParam(searchParams.get('accreditation')),
+  }), [searchParams]);
 
   // Handle search
   const handleSearch = useCallback((term: string) => {
@@ -41,11 +40,9 @@ const CorporateDirectory: React.FC = () => {
   // Prepare API filters
   const apiFilters = useMemo(() => ({
     searchTerm: searchTerm || undefined,
-    industries: selectedFilters.industry,
-    services: selectedFilters.service,
-    sectors: selectedFilters.sector,
-    states: selectedFilters.state,
-    headCountRanges: selectedFilters.headcountRanges,
+    states: selectedFilters.state[0] || undefined,
+    programs: selectedFilters.programs,
+    accreditation: selectedFilters.accreditation,
     page: 1,
     pageSize: 20,
   }), [searchTerm, selectedFilters]);
@@ -53,11 +50,51 @@ const CorporateDirectory: React.FC = () => {
   // Fetch data
   const { 
     data: response, 
-    isLoading: isLoadingCorporates, 
+    isLoading: isLoadingColleges, 
     isError 
-  } = useGetAllCorporatesQuery(apiFilters);
+  } = useGetAllCollegesQuery(apiFilters);
   
-  const corporates = response?.data ?? [];
+  const colleges = response?.data ?? [];
+  
+  // Fetch filter options
+  const { data: statesData, isLoading: isLoadingStates } = useGetStatesQuery();
+  
+  // Transform states to options
+  const stateOptions = useMemo<Option[]>(() => 
+    (statesData?.data || []).map(state => ({
+      value: state.name,
+      label: state.name
+    })), 
+    [statesData]
+  );
+  
+  // Define available filters with their options
+  const filters = useMemo(() => [
+    {
+      id: 'state' as const,
+      label: 'State',
+      options: stateOptions,
+      isLoading: isLoadingStates
+    },
+    {
+      id: 'programs' as const,
+      label: 'Programs',
+      options: [
+        { value: 'Engineering', label: 'Engineering' },
+        { value: 'Business', label: 'Business' },
+        { value: 'Arts', label: 'Arts' },
+      ]
+    },
+    {
+      id: 'accreditation' as const,
+      label: 'Accreditation',
+      options: [
+        { value: 'NAAC', label: 'NAAC' },
+        { value: 'AICTE', label: 'AICTE' },
+        { value: 'UGC', label: 'UGC' },
+      ]
+    }
+  ], [stateOptions, isLoadingStates]);
   
   // Handle filter changes
   const handleFilterChange = useCallback((filterId: FilterType, values: string[]) => {
@@ -73,6 +110,8 @@ const CorporateDirectory: React.FC = () => {
     newSearchParams.delete('page');
     setSearchParams(newSearchParams);
   }, [searchParams, setSearchParams]);
+  
+
 
   // Show error state
   if (isError) {
@@ -80,7 +119,7 @@ const CorporateDirectory: React.FC = () => {
       <div className="min-h-screen bg-gray-50 p-4">
         <div className="max-w-7xl mx-auto">
           <div className="bg-white rounded-lg p-4 text-red-600 shadow-sm">
-            Failed to load corporates. Please try again.
+            Failed to load colleges. Please try again.
           </div>
         </div>
       </div>
@@ -92,7 +131,7 @@ const CorporateDirectory: React.FC = () => {
       {/* Header */}
       <div className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <h1 className="text-2xl font-semibold text-gray-900">Corporate Directory</h1>
+          <h1 className="text-2xl font-semibold text-gray-900">College Directory</h1>
         </div>
       </div>
 
@@ -103,16 +142,11 @@ const CorporateDirectory: React.FC = () => {
           <div className="w-72 flex-shrink-0 relative">
             <div className="sticky top-6">
               <FilterSidebar 
-                selected={{
-                  industry: selectedFilters.industry,
-                  service: selectedFilters.service,
-                  sector: selectedFilters.sector,
-                  state: selectedFilters.state,
-                  headcountRanges: selectedFilters.headcountRanges
-                }}
-                onSearch={handleSearch}
+                filters={filters}
+                selected={selectedFilters}
                 onChange={handleFilterChange}
-                searchPlaceholder="Search companies..."
+                onSearch={handleSearch}
+                searchPlaceholder="Search by college name..."
               />
             </div>
           </div>
@@ -122,13 +156,13 @@ const CorporateDirectory: React.FC = () => {
             {/* Results summary */}
             <div className="mb-4">
               <p className="text-gray-600">
-                {isLoadingCorporates ? 'Loading...' : `${corporates.length} companies found`}
+                {isLoadingColleges ? 'Loading...' : `${colleges.length} colleges found`}
               </p>
             </div>
 
             {/* Grid with consistent card sizes */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {isLoadingCorporates ? (
+              {isLoadingColleges ? (
                 // Loading skeletons
                 Array.from({ length: 6 }).map((_, i) => (
                   <div
@@ -136,22 +170,23 @@ const CorporateDirectory: React.FC = () => {
                     className="animate-pulse bg-white rounded-lg shadow-sm h-[280px] w-full"
                   />
                 ))
-              ) : corporates.length > 0 ? (
-                // Company cards
-                corporates.map((corporate) => (
-                  <div key={corporate.id} className="h-full w-full">
+              ) : colleges.length > 0 ? (
+                // College cards
+                colleges.map((college) => (
+                  <div key={college.ID} className="h-[280px] w-full">
                     <ProfileCard
-                      logoUrl={corporate.logo || corporate.logoUrl}
-                      companyName={corporate.companyName}
-                      headCount={corporate.headCount}
-                      jobsPosted={corporate.jobsPosted || 0}
+                      logoUrl={college.logoUrl}
+                      collegeName={college.collegeName}
+                      studentCount={college.studentCount}
+                      location={college.location || college.state}
+                      programs={college.programs}
                     />
                   </div>
                 ))
               ) : (
                 // Empty state
                 <div className="col-span-full flex flex-col items-center justify-center py-12">
-                  <p className="text-lg text-gray-500 mb-2">No companies found</p>
+                  <p className="text-lg text-gray-500 mb-2">No colleges found</p>
                   <p className="text-sm text-gray-400">Try adjusting your filters to see more results</p>
                 </div>
               )}
@@ -163,4 +198,4 @@ const CorporateDirectory: React.FC = () => {
   );
 };
 
-export default CorporateDirectory;
+export default CollegeDirectory;

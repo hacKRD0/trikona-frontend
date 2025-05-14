@@ -4,21 +4,44 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '../../redux/store';
 import { setFilter } from '../../redux/slices/directorySlice';
 import { useGetAllStudentsQuery } from '../../redux/services/directoryApi';
-import FilterSidebar, { FilterOption } from '../../components/directory/student/FilterSidebar';
+import FilterSidebar from '../../components/directory/student/FilterSidebar';
+import type { FilterOption } from '../../components/directory/student/FilterSidebar';
 import ProfileCard from '../../components/directory/student/ProfileCard';
 import { LEVELS_OF_STUDY, FIELDS_OF_STUDY } from '../../constants';
 
 const studentFiltersConfig: FilterOption[] = [
-  { id: 'collegeName',          label: 'College',               options: ['Liberal Arts College', 'Example University', 'Tech Institute'] },
-  { id: 'level',                label: 'Level of Study',        options: LEVELS_OF_STUDY },
-  { id: 'fieldOfStudy',         label: 'Field of Study',        options: FIELDS_OF_STUDY },
-  { id: 'cgpaRanges',           label: 'CGPA Range',            options: ['0.0-2.0', '2.0-4.0', '4.0-6.0', '6.0-8.0', '8.0-10.0'] },
-  { id: 'yearOfStudy',          label: 'Year of Study',         options: ['1', '2', '3', '4'] },
-  // { id: 'company',              label: 'Company',               options: ['Tech Corp', 'Engineering Solutions', 'Construction Co'] },
-  // { id: 'title',                label: 'Job Title',             options: ['Software Engineer', 'Civil Engineer', 'Project Manager'] },
-  // { id: 'minExperienceYears',   label: 'Min Experience',        options: ['0', '1', '2', '3', '5'] },
-  // { id: 'maxExperienceYears',   label: 'Max Experience',        options: ['2', '3', '5', '10', '15'] },
-  { id: 'skills',               label: 'Skills',                options: ['AutoCAD', 'Concrete Design', 'Surveying', 'Estimating', 'Project Management'] },
+  { 
+    id: 'collegeName',
+    label: 'College',
+    options: [],
+    isApiBased: true
+  },
+  { 
+    id: 'level',
+    label: 'Level of Study',
+    options: LEVELS_OF_STUDY
+  },
+  { 
+    id: 'fieldOfStudy',
+    label: 'Field of Study',
+    options: FIELDS_OF_STUDY
+  },
+  { 
+    id: 'cgpaRanges',
+    label: 'CGPA Range',
+    options: ['0.0-2.0', '2.0-4.0', '4.0-6.0', '6.0-8.0', '8.0-10.0']
+  },
+  { 
+    id: 'yearOfStudy',
+    label: 'Year of Study',
+    options: ['1', '2', '3', '4']
+  },
+  { 
+    id: 'skills',
+    label: 'Skills',
+    options: [],
+    isApiBased: true
+  },
 ];
 
 
@@ -63,9 +86,9 @@ const StudentDirectory: React.FC = () => {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="flex gap-6">
+        <div className="flex flex-col md:flex-row gap-6">
           {/* Sidebar */}
-          <div className="w-64 flex-shrink-0">
+          <div className="w-full md:w-72 flex-shrink-0">
             <div className="sticky top-6">
               <FilterSidebar
                 filters={studentFiltersConfig}
@@ -76,9 +99,9 @@ const StudentDirectory: React.FC = () => {
           </div>
 
           {/* Main content area */}
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             {/* Grid with consistent card sizes */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
               {isLoading ? (
                 // Loading skeletons
                 Array.from({ length: 6 }).map((_, i) => (
@@ -97,7 +120,7 @@ const StudentDirectory: React.FC = () => {
                   const collegeName = educations[0]?.collegeName ?? '';
 
                   return (
-                    <div key={user.ID} className="h-[280px] w-full">
+                    <div key={user.ID} className="h-full w-full">
                       <ProfileCard
                         avatarUrl={user.avatarUrl}
                         name={name}

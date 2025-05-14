@@ -1,138 +1,82 @@
-import React, { useState, useMemo, ChangeEvent, useRef, useEffect } from 'react';
-import { FaChevronDown, FaCheck, FaTimes } from 'react-icons/fa';
+import React, { useMemo, useState, useEffect, useCallback } from 'react';
+import Select, { MultiValue } from 'react-select';
 
-type SearchableDropdownProps = {
-  options: string[];
-  selected: string;
-  onChange: (value: string) => void;
+export interface Option {
+  value: string;
+  label: string;
+}
+
+export interface SearchableDropdownProps {
+  options: Option[];
+  selected: MultiValue<Option>;
+  onChange: (value: MultiValue<Option>) => void;
   placeholder?: string;
   label?: string;
-};
+  isLoading?: boolean;
+}
 
-const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
+const SearchableDropdown: React.FC<SearchableDropdownProps> = React.memo(({
   options,
   selected,
   onChange,
   placeholder = 'Search...',
   label,
+  isLoading = false,
 }) => {
-  const [query, setQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
-  const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Debounce the query
+  // Debounce effect
   useEffect(() => {
     const handler = setTimeout(() => {
-      setDebouncedQuery(query);
-    }, 500);
+      setDebouncedQuery(searchQuery);
+    }, 300);
 
     return () => {
       clearTimeout(handler);
     };
-  }, [query]);
+  }, [searchQuery]);
 
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener('click', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-    };
-  }, [isOpen]);
-
-  // Reset debouncedQuery when query is cleared
-  useEffect(() => {
-    if (query === '') {
-      setDebouncedQuery('');
-    }
-  }, [query]);
-
+  // Filtered options based on debounced query
   const filteredOptions = useMemo(() => {
-    return debouncedQuery === ''
-      ? options
-      : options.filter((option) =>
-          option.toLowerCase().includes(debouncedQuery.toLowerCase())
-        );
+    if (!debouncedQuery) return options;
+    return options.filter((option) =>
+      option.label.toLowerCase().includes(debouncedQuery.toLowerCase())
+    );
   }, [options, debouncedQuery]);
 
+  // Memoized change handler
+  const handleInputChange = useCallback((inputValue: string) => {
+    setSearchQuery(inputValue);
+  }, []);
+
+  const handleChange = useCallback(
+    (selectedOptions: MultiValue<Option>): void => {
+      onChange(selectedOptions);
+    },
+    [onChange]
+  );
+
   return (
-    <div className="w-full relative" ref={dropdownRef}>
-      {label && (
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          {label}
-        </label>
-      )}
-      
-      <div className="relative">
-        <input
-          type="text"
-          className="w-full rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
-          placeholder={placeholder}
-          value={query || selected}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => {
-            setQuery(e.target.value);
-            if (!isOpen) setIsOpen(true);
-          }}
-          onFocus={() => setIsOpen(true)}
-        />
-        <div className="absolute inset-y-0 right-0 flex items-center space-x-3 pr-3 bg-white">
-          {(query || selected) && (
-            <button
-              type="button"
-              className="p-1 text-gray-400 hover:text-gray-500 -ml-10"
-              onClick={() => {
-                setQuery('');
-                setDebouncedQuery('');
-                onChange('');
-              }}
-              aria-label="Clear search"
-            >
-              <FaTimes className="h-4 w-4" />
-            </button>
-          )}
-          <button 
-            className="flex items-center px-2 focus:outline-none -ml-4"
-            onClick={() => setIsOpen(!isOpen)}
-          >
-            <FaChevronDown className="h-4 w-4 text-gray-400" />
-          </button>
-        </div>
-      </div>
-      {isOpen && filteredOptions.length > 0 && (
-        <div className="absolute z-10 mt-1 w-full bg-white shadow-lg rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm max-h-60 overflow-auto">
-          {filteredOptions.map((option) => (
-            <div 
-              key={option}
-              className={`relative cursor-default select-none py-2 pl-8 pr-4 hover:bg-indigo-600 hover:text-white text-gray-900`}
-              onClick={() => {
-                onChange(option);
-                setQuery('');
-                setIsOpen(false);
-              }}
-            >
-              <span className={`block truncate ${selected === option ? 'font-semibold' : 'font-normal'}`}>
-                {option}
-              </span>
-              {selected === option && (
-                <span className="absolute inset-y-0 left-0 flex items-center pl-1.5 text-indigo-600">
-                  <FaCheck className="h-5 w-5" />
-                </span>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
+    <div className="w-full">
+      {label && <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>}
+      <Select
+        isMulti
+        options={filteredOptions}
+        value={selected}
+        onChange={handleChange}
+        onInputChange={handleInputChange}
+        placeholder={placeholder}
+        className="basic-multi-select"
+        classNamePrefix="select"
+        isLoading={isLoading}
+        loadingMessage={() => 'Loading...'}
+        noOptionsMessage={({ inputValue }) =>
+          inputValue ? 'No options found' : 'No options available'
+        }
+      />
     </div>
   );
-};
+});
 
 export default SearchableDropdown;
